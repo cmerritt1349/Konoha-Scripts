@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Test Your Animal Knowledge</title>
+   <style>
+      @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700&display=swap');
+
+      :root {
+         --green: #2e7d32;
+         --green-light: #4caf50;
+         --green-dark: #1b5e20;
+         --yellow: #f9a825;
+         --yellow-light: #fdd835;
+         --red: #c62828;
+         --red-light: #ef9a9a;
+         --white: #ffffff;
+         --bg: #f0f7f0;
+         --text: #1a1a1a;
+         --card: #ffffff;
+         --shadow: 0 4px 16px rgba(0,0,0,0.10);
+      }
+
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+
+      body {
+         font-family: 'Nunito', sans-serif;
+         background: var(--bg);
+         color: var(--text);
+         min-height: 100vh;
+         display: flex;
+         flex-direction: column;
+         align-items: center;
+         justify-content: center;
+         padding: 1.5rem;
+      }
+
+      /* ── SCREENS ── */
+      .screen { display: none; width: 100%; max-width: 700px; }
+      .screen.active { display: block; }
+
+      /* ── HOME ── */
+      header {
+         background: var(--green);
+         border-radius: 1.2rem;
+         padding: 2.5rem 2rem;
+         text-align: center;
+         margin-bottom: 2rem;
+         box-shadow: var(--shadow);
+      }
+
+      header h1 {
+         font-family: 'Fredoka One', cursive;
+         font-size: 2.6rem;
+         color: var(--white);
+         letter-spacing: 0.02em;
+      }
+
+      #start-btn {
+         display: block;
+         width: 60%;
+         margin: 0 auto 2.5rem;
+         padding: 1.1rem 2rem;
+         background: var(--yellow);
+         color: var(--text);
+         font-family: 'Fredoka One', cursive;
+         font-size: 1.6rem;
+         border: none;
+         border-radius: 1rem;
+         cursor: pointer;
+         box-shadow: var(--shadow);
+         transition: background 0.2s, transform 0.1s;
+      }
+
+      #start-btn:hover, #start-btn:focus {
+         background: var(--yellow-light);
+         transform: scale(1.03);
+         outline: 3px solid var(--green-dark);
+      }
+
+      .features {
+         display: flex;
+         gap: 1rem;
+         justify-content: space-between;
+      }
+
+      .feature-card {
+         flex: 1;
+         background: var(--card);
+         border-radius: 1rem;
+         padding: 1.4rem 1rem;
+         text-align: center;
+         box-shadow: var(--shadow);
+         border-top: 5px solid var(--green-light);
+      }
+
+      .feature-card p {
+         font-size: 1.05rem;
+         font-weight: 700;
+         color: var(--green-dark);
+         line-height: 1.4;
+      }
+
+      /* ── QUIZ ── */
+      #progress-bar-container {
+         background: #c8e6c9;
+         border-radius: 2rem;
+         height: 1.2rem;
+         margin-bottom: 1.5rem;
+         overflow: hidden;
+         box-shadow: inset 0 2px 4px rgba(0,0,0,0.08);
+      }
+
+      #progress-bar {
+         height: 100%;
+         background: var(--green);
+         border-radius: 2rem;
+         transition: width 0.4s ease;
+         width: 0%;
+      }
+
+      #progress-label {
+         text-align: center;
+         font-size: 0.95rem;
+         font-weight: 600;
+         color: var(--green-dark);
+         margin-bottom: 1rem;
+      }
+
+      #question-box {
+         background: var(--green);
+         color: var(--white);
+         border-radius: 1.2rem;
+         padding: 2rem 1.5rem;
+         text-align: center;
+         font-family: 'Fredoka One', cursive;
+         font-size: 1.5rem;
+         margin-bottom: 1.5rem;
+         box-shadow: var(--shadow);
+         min-height: 100px;
+         display: flex;
+         align-items: center;
+         justify-content: center;
+      }
+
+      #feedback {
+         text-align: center;
+         font-size: 1.1rem;
+         font-weight: 700;
+         min-height: 1.8rem;
+         margin-bottom: 0.8rem;
+         border-radius: 0.5rem;
+         padding: 0.3rem 1rem;
+      }
+
+      .feedback-correct { color: var(--green-dark); background: #c8e6c9; }
+      .feedback-incorrect { color: var(--red); background: var(--red-light); }
+
+      #choices {
+         display: flex;
+         flex-direction: column;
+         gap: 0.85rem;
+      }
+
+      .choice-btn {
+         width: 100%;
+         padding: 1rem 1.5rem;
+         background: var(--card);
+         border: 2px solid #c8e6c9;
+         border-radius: 0.9rem;
+         font-family: 'Nunito', sans-serif;
+         font-size: 1.1rem;
+         font-weight: 700;
+         color: var(--text);
+         cursor: pointer;
+         text-align: left;
+         transition: background 0.15s, border-color 0.15s, transform 0.1s;
+         box-shadow: var(--shadow);
+      }
+
+      .choice-btn:hover:not(:disabled), .choice-btn:focus:not(:disabled) {
+         background: #e8f5e9;
+         border-color: var(--green);
+         transform: scale(1.01);
+         outline: 3px solid var(--green-dark);
+      }
+
+      .choice-btn.correct {
+         background: #c8e6c9;
+         border-color: var(--green-dark);
+         color: var(--green-dark);
+      }
+
+      .choice-btn.incorrect {
+         background: var(--red-light);
+         border-color: var(--red);
+         color: var(--red);
+      }
+
+      .choice-btn:disabled { cursor: default; }
+
+      #next-btn {
+         display: none;
+         margin: 1.2rem auto 0;
+         padding: 0.8rem 2.5rem;
+         background: var(--green);
+         color: var(--white);
+         font-family: 'Fredoka One', cursive;
+         font-size: 1.2rem;
+         border: none;
+         border-radius: 0.8rem;
+         cursor: pointer;
+         box-shadow: var(--shadow);
+         transition: background 0.2s;
+      }
+
+      #next-btn:hover, #next-btn:focus {
+         background: var(--green-dark);
+         outline: 3px solid var(--yellow);
+      }
+
+      /* ── RESULTS ── */
+      #results-screen header {
+         background: var(--green-dark);
+      }
+
+      #results-screen header h2 {
+         font-family: 'Fredoka One', cursive;
+         font-size: 2.2rem;
+         color: var(--white);
+      }
+
+      #score-display {
+         font-family: 'Fredoka One', cursive;
+         font-size: 3rem;
+         color: var(--green-dark);
+         margin-top: 0.5rem;
+      }
+
+      .result-cards {
+         display: flex;
+         gap: 1.5rem;
+         justify-content: center;
+         margin: 2rem 0;
+      }
+
+      .result-card {
+         flex: 1;
+         background: var(--card);
+         border-radius: 1rem;
+         padding: 1.5rem 1rem;
+         text-align: center;
+         box-shadow: var(--shadow);
+      }
+
+      .result-card.correct-card { border-top: 5px solid var(--green-light); }
+      .result-card.incorrect-card { border-top: 5px solid var(--red); }
+
+      .result-card .result-num {
+         font-family: 'Fredoka One', cursive;
+         font-size: 2.5rem;
+      }
+
+      .correct-card .result-num { color: var(--green-dark); }
+      .incorrect-card .result-num { color: var(--red); }
+
+      .result-card p {
+         font-size: 1rem;
+         font-weight: 700;
+         color: #555;
+         margin-top: 0.3rem;
+      }
+
+      #play-again-btn {
+         display: block;
+         margin: 0 auto;
+         padding: 1rem 2.5rem;
+         background: var(--yellow);
+         color: var(--text);
+         font-family: 'Fredoka One', cursive;
+         font-size: 1.4rem;
+         border: none;
+         border-radius: 1rem;
+         cursor: pointer;
+         box-shadow: var(--shadow);
+         transition: background 0.2s, transform 0.1s;
+      }
+
+      #play-again-btn:hover, #play-again-btn:focus {
+         background: var(--yellow-light);
+         transform: scale(1.03);
+         outline: 3px solid var(--green-dark);
+      }
+
+      @media (max-width: 500px) {
+         header h1 { font-size: 1.8rem; }
+         #start-btn { width: 90%; font-size: 1.3rem; }
+         .features { flex-direction: column; }
+         .result-cards { flex-direction: column; }
+         #question-box { font-size: 1.2rem; }
+      }
+   </style>
+</head>
+<body>
+
+   <!-- HOME SCREEN -->
+   <main id="home-screen" class="screen active" aria-label="Quiz Home">
+      <header>
+         <h1>Test Your Animal Knowledge</h1>
+      </header>
+      <button id="start-btn" aria-label="Start the animal knowledge quiz">Start Quiz</button>
+      <section aria-label="Quiz features">
+         <div class="features">
+            <div class="feature-card">
+               <p>10 Multiple Choice Questions</p>
+            </div>
+            <div class="feature-card">
+               <p>Instant Feedback Per Question</p>
+            </div>
+            <div class="feature-card">
+               <p>Score &amp; Final Results</p>
+            </div>
+         </div>
+      </section>
+   </main>
+
+   <!-- QUIZ SCREEN -->
+   <main id="quiz-screen" class="screen" aria-label="Quiz Questions" aria-live="polite">
+      <div id="progress-bar-container" role="progressbar" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0" aria-label="Quiz progress">
+         <div id="progress-bar"></div>
+      </div>
+      <p id="progress-label" aria-live="polite">Question 1 of 10</p>
+      <div id="question-box" aria-live="polite" aria-atomic="true"></div>
+      <div id="feedback" aria-live="assertive" aria-atomic="true" role="alert"></div>
+      <div id="choices" role="group" aria-label="Answer choices"></div>
+      <button id="next-btn" aria-label="Go to next question">Next Question</button>
+   </main>
+
+   <!-- RESULTS SCREEN -->
+   <main id="results-screen" class="screen" aria-label="Quiz Results">
+      <header>
+         <h2>Quiz Complete!</h2>
+         <p id="score-display" aria-live="polite"></p>
+      </header>
+      <div class="result-cards">
+         <div class="result-card correct-card">
+            <p class="result-num" id="num-correct"></p>
+            <p>Correct</p>
+         </div>
+         <div class="result-card incorrect-card">
+            <p class="result-num" id="num-incorrect"></p>
+            <p>Incorrect</p>
+         </div>
+      </div>
+      <button id="play-again-btn" aria-label="Play the quiz again">Play Again</button>
+   </main>
+
+   <script>
+      const questions = [
+         { question: "What is the fastest land animal?", choices: ["Lion", "Cheetah", "Horse", "Greyhound"], answer: 1 },
+         { question: "How many legs does a spider have?", choices: ["6", "8", "10", "12"], answer: 1 },
+         { question: "What is the largest mammal in the world?", choices: ["Elephant", "Giraffe", "Blue Whale", "Hippopotamus"], answer: 2 },
+         { question: "Which bird cannot fly?", choices: ["Eagle", "Parrot", "Penguin", "Sparrow"], answer: 2 },
+         { question: "What is a group of lions called?", choices: ["Pack", "Herd", "Pride", "Flock"], answer: 2 },
+         { question: "Which animal is known for changing color?", choices: ["Iguana", "Chameleon", "Gecko", "Salamander"], answer: 1 },
+         { question: "How long is an elephant pregnant before giving birth?", choices: ["6 months", "12 months", "18 months", "22 months"], answer: 3 },
+         { question: "What is the only mammal capable of true flight?", choices: ["Flying Squirrel", "Bat", "Sugar Glider", "Colugo"], answer: 1 },
+         { question: "Which animal has the longest lifespan?", choices: ["Tortoise", "Elephant", "Parrot", "Whale"], answer: 0 },
+         { question: "What is the smallest bird in the world?", choices: ["Hummingbird", "Sparrow", "Finch", "Wren"], answer: 0 }
+      ];
+
+      let current = 0;
+      let score = 0;
+      let answered = false;
+
+      const homeScreen = document.getElementById('home-screen');
+      const quizScreen = document.getElementById('quiz-screen');
+      const resultsScreen = document.getElementById('results-screen');
+      const questionBox = document.getElementById('question-box');
+      const choicesDiv = document.getElementById('choices');
+      const feedback = document.getElementById('feedback');
+      const nextBtn = document.getElementById('next-btn');
+      const progressBar = document.getElementById('progress-bar');
+      const progressLabel = document.getElementById('progress-label');
+      const progressContainer = document.getElementById('progress-bar-container');
+
+      function showScreen(screen) {
+         homeScreen.classList.remove('active');
+         quizScreen.classList.remove('active');
+         resultsScreen.classList.remove('active');
+         screen.classList.add('active');
+      }
+
+      function loadQuestion() {
+         answered = false;
+         feedback.textContent = '';
+         feedback.className = '';
+         nextBtn.style.display = 'none';
+
+         const q = questions[current];
+         questionBox.textContent = q.question;
+         progressLabel.textContent = `Question ${current + 1} of ${questions.length}`;
+         const pct = (current / questions.length) * 100;
+         progressBar.style.width = pct + '%';
+         progressContainer.setAttribute('aria-valuenow', current);
+
+         choicesDiv.innerHTML = '';
+         q.choices.forEach((choice, i) => {
+            const btn = document.createElement('button');
+            btn.className = 'choice-btn';
+            btn.textContent = choice;
+            btn.setAttribute('aria-label', `Choice ${i + 1}: ${choice}`);
+            btn.addEventListener('click', () => selectAnswer(i, btn));
+            choicesDiv.appendChild(btn);
+         });
+      }
+
+      function selectAnswer(index, btn) {
+         if (answered) return;
+         answered = true;
+
+         const correct = questions[current].answer;
+         const allBtns = choicesDiv.querySelectorAll('.choice-btn');
+         allBtns.forEach(b => b.disabled = true);
+
+         if (index === correct) {
+            btn.classList.add('correct');
+            feedback.textContent = 'Correct!';
+            feedback.className = 'feedback-correct';
+            score++;
+         } else {
+            btn.classList.add('incorrect');
+            allBtns[correct].classList.add('correct');
+            feedback.textContent = `Incorrect! The correct answer is: ${questions[current].choices[correct]}`;
+            feedback.className = 'feedback-incorrect';
+         }
+
+         nextBtn.style.display = 'block';
+         nextBtn.textContent = current < questions.length - 1 ? 'Next Question' : 'See Results';
+         nextBtn.setAttribute('aria-label', current < questions.length - 1 ? 'Go to next question' : 'See your final results');
+      }
+
+      function showResults() {
+         progressBar.style.width = '100%';
+         progressContainer.setAttribute('aria-valuenow', questions.length);
+         document.getElementById('score-display').textContent = `${score} / ${questions.length}`;
+         document.getElementById('num-correct').textContent = score;
+         document.getElementById('num-incorrect').textContent = questions.length - score;
+         showScreen(resultsScreen);
+      }
+
+      document.getElementById('start-btn').addEventListener('click', () => {
+         current = 0;
+         score = 0;
+         showScreen(quizScreen);
+         loadQuestion();
+      });
+
+      nextBtn.addEventListener('click', () => {
+         current++;
+         if (current < questions.length) {
+            loadQuestion();
+         } else {
+            showResults();
+         }
+      });
+
+      document.getElementById('play-again-btn').addEventListener('click', () => {
+         current = 0;
+         score = 0;
+         showScreen(quizScreen);
+         loadQuestion();
+      });
+   </script>
+
+</body>
+</html>
