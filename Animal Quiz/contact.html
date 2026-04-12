@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta name="description" content="Contact the Animal Quiz team. Send us your feedback, suggest new quiz questions, or ask about the animal kingdom.">
+   <title>Animal Quiz - Contact Us</title>
+   <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+   <nav aria-label="Main navigation">
+      <a href="index.html" class="nav-logo" aria-label="Animal Quiz Home">
+         <span class="logo-icon">🐾</span>
+         <span>Animal Quiz</span>
+      </a>
+      <ul class="nav-links">
+         <li><a href="index.html">Home</a></li>
+         <li><a href="quiz.html">Quiz</a></li>
+         <li><a href="facts.html">Facts</a></li>
+         <li><a href="gallery.html">Gallery</a></li>
+         <li><a href="contact.html" class="active" aria-current="page">Contact</a></li>
+      </ul>
+   </nav>
+
+   <main>
+      <div class="page-header">
+         <h1>Contact Us</h1>
+         <p>Have a question, suggestion, or feedback? We would love to hear from you!</p>
+      </div>
+
+      <div class="container">
+         <div class="card" style="max-width:600px; margin:0 auto;">
+            <h2 style="font-family:'Fredoka One',cursive; color:var(--green-dark); font-size:1.5rem; margin-bottom:1.5rem;">Send Us a Message</h2>
+
+            <form id="contact-form" novalidate aria-label="Contact form">
+
+               <div class="form-group">
+                  <label for="name">Full Name <span aria-hidden="true" style="color:var(--red);">*</span></label>
+                  <input type="text" id="name" name="name" placeholder="Enter your full name"
+                         aria-required="true" aria-describedby="name-error">
+                  <p class="error-msg" id="name-error" role="alert">Please enter your full name.</p>
+               </div>
+
+               <div class="form-group">
+                  <label for="email">Email Address <span aria-hidden="true" style="color:var(--red);">*</span></label>
+                  <input type="email" id="email" name="email" placeholder="Enter your email address"
+                         aria-required="true" aria-describedby="email-error">
+                  <p class="error-msg" id="email-error" role="alert">Please enter a valid email address.</p>
+               </div>
+
+               <div class="form-group">
+                  <label for="topic">Topic</label>
+                  <select id="topic" name="topic" aria-label="Select a topic for your message">
+                     <option value="">-- Select a topic --</option>
+                     <option value="feedback">General Feedback</option>
+                     <option value="suggestion">Suggest a Quiz Question</option>
+                     <option value="question">Ask About an Animal</option>
+                     <option value="other">Other</option>
+                  </select>
+               </div>
+
+               <div class="form-group">
+                  <label for="message">Message <span aria-hidden="true" style="color:var(--red);">*</span></label>
+                  <textarea id="message" name="message" rows="5"
+                            placeholder="Type your message here..."
+                            aria-required="true" aria-describedby="message-error"></textarea>
+                  <p class="error-msg" id="message-error" role="alert">Please enter a message.</p>
+               </div>
+
+               <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom:1rem;">
+                  <span style="color:var(--red);">*</span> Required fields
+               </p>
+
+               <button type="submit" class="btn" aria-label="Submit contact form">Send Message</button>
+
+               <div class="success-msg" id="success-msg" role="alert" aria-live="assertive">
+                  Thank you! Your message has been sent successfully. We will get back to you soon.
+               </div>
+
+            </form>
+         </div>
+      </div>
+   </main>
+
+   <footer>
+      <div class="footer-links">
+         <a href="index.html">Home</a>
+         <a href="quiz.html">Quiz</a>
+         <a href="facts.html">Facts</a>
+         <a href="gallery.html">Gallery</a>
+         <a href="contact.html">Contact</a>
+      </div>
+      <p>&copy; 2026 Animal Quiz. All rights reserved.</p>
+   </footer>
+
+   <script>
+      const form = document.getElementById('contact-form');
+
+      form.addEventListener('submit', function(e) {
+         e.preventDefault();
+
+         const name    = document.getElementById('name');
+         const email   = document.getElementById('email');
+         const message = document.getElementById('message');
+         let valid = true;
+
+         // Validate name
+         if (!name.value.trim()) {
+            name.classList.add('error');
+            document.getElementById('name-error').classList.add('visible');
+            valid = false;
+         } else {
+            name.classList.remove('error');
+            document.getElementById('name-error').classList.remove('visible');
+         }
+
+         // Validate email
+         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+         if (!email.value.trim() || !emailPattern.test(email.value)) {
+            email.classList.add('error');
+            document.getElementById('email-error').classList.add('visible');
+            valid = false;
+         } else {
+            email.classList.remove('error');
+            document.getElementById('email-error').classList.remove('visible');
+         }
+
+         // Validate message
+         if (!message.value.trim()) {
+            message.classList.add('error');
+            document.getElementById('message-error').classList.add('visible');
+            valid = false;
+         } else {
+            message.classList.remove('error');
+            document.getElementById('message-error').classList.remove('visible');
+         }
+
+         // Show success if valid
+         if (valid) {
+            form.reset();
+            document.getElementById('success-msg').classList.add('visible');
+         }
+      });
+
+      // Live validation — clear errors as user types
+      ['name', 'email', 'message'].forEach(id => {
+         document.getElementById(id).addEventListener('input', function() {
+            this.classList.remove('error');
+            document.getElementById(id + '-error').classList.remove('visible');
+         });
+      });
+   </script>
+
+</body>
+</html>
