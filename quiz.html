@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta name="description" content="Take the Animal Knowledge Quiz! Answer 10 multiple choice questions and test how much you know about the animal kingdom.">
+   <title>Animal Quiz - Take the Quiz</title>
+   <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+   <nav aria-label="Main navigation">
+      <a href="index.html" class="nav-logo" aria-label="Animal Quiz Home">
+         <span class="logo-icon">🐾</span>
+         <span>Animal Quiz</span>
+      </a>
+      <ul class="nav-links">
+         <li><a href="index.html">Home</a></li>
+         <li><a href="quiz.html" class="active" aria-current="page">Quiz</a></li>
+         <li><a href="facts.html">Facts</a></li>
+         <li><a href="gallery.html">Gallery</a></li>
+         <li><a href="contact.html">Contact</a></li>
+      </ul>
+   </nav>
+
+   <main>
+      <div class="quiz-wrapper">
+
+         <!-- HOME SCREEN -->
+         <div id="home-screen">
+            <header style="background:var(--green); border-radius:1.2rem; padding:2.5rem 2rem; text-align:center; margin-bottom:2rem; box-shadow:var(--shadow);">
+               <h1 style="font-family:'Fredoka One',cursive; font-size:2.4rem; color:var(--white);">Test Your Animal Knowledge</h1>
+               <p style="color:#a5d6a7; margin-top:0.5rem;">10 questions — how many can you get right?</p>
+            </header>
+            <div style="text-align:center; margin-bottom:2rem;">
+               <button id="start-btn" class="btn btn-yellow" style="font-size:1.6rem; padding:1.1rem 3rem;" aria-label="Start the animal knowledge quiz">Start Quiz</button>
+            </div>
+            <div class="feature-grid">
+               <div class="feature-card"><h3>10 Questions</h3><p>Multiple choice</p></div>
+               <div class="feature-card"><h3>Instant Feedback</h3><p>Per question</p></div>
+               <div class="feature-card"><h3>Final Score</h3><p>See your results</p></div>
+            </div>
+         </div>
+
+         <!-- QUIZ SCREEN -->
+         <div id="quiz-screen" style="display:none;">
+            <div id="progress-bar-container" role="progressbar" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0" aria-label="Quiz progress">
+               <div id="progress-bar"></div>
+            </div>
+            <p id="progress-label" aria-live="polite">Question 1 of 10</p>
+            <div id="question-box" aria-live="polite" aria-atomic="true"></div>
+            <div id="feedback" aria-live="assertive" aria-atomic="true" role="alert"></div>
+            <div id="choices" role="group" aria-label="Answer choices"></div>
+            <div style="text-align:center;">
+               <button id="next-btn" aria-label="Go to next question">Next Question</button>
+            </div>
+         </div>
+
+         <!-- RESULTS SCREEN -->
+         <div id="results-screen" style="display:none;">
+            <header style="background:var(--green-dark); border-radius:1.2rem; padding:2rem; text-align:center; margin-bottom:2rem; box-shadow:var(--shadow);">
+               <h2 style="font-family:'Fredoka One',cursive; font-size:2.2rem; color:var(--white);">Quiz Complete!</h2>
+               <p id="score-display" aria-live="polite"></p>
+            </header>
+            <div class="result-cards">
+               <div class="result-card correct-card">
+                  <p class="result-num" id="num-correct"></p>
+                  <p>Correct</p>
+               </div>
+               <div class="result-card incorrect-card">
+                  <p class="result-num" id="num-incorrect"></p>
+                  <p>Incorrect</p>
+               </div>
+            </div>
+            <div style="text-align:center; margin-top:1rem;">
+               <button id="play-again-btn" class="btn btn-yellow" style="font-size:1.4rem;" aria-label="Play the quiz again">Play Again</button>
+            </div>
+         </div>
+
+      </div>
+   </main>
+
+   <footer>
+      <div class="footer-links">
+         <a href="index.html">Home</a>
+         <a href="quiz.html">Quiz</a>
+         <a href="facts.html">Facts</a>
+         <a href="gallery.html">Gallery</a>
+         <a href="contact.html">Contact</a>
+      </div>
+      <p>&copy; 2026 Animal Quiz. All rights reserved.</p>
+   </footer>
+
+   <script>
+      const questions = [
+         { question: "What is the fastest land animal?", choices: ["Lion", "Cheetah", "Horse", "Greyhound"], answer: 1 },
+         { question: "How many legs does a spider have?", choices: ["6", "8", "10", "12"], answer: 1 },
+         { question: "What is the largest mammal in the world?", choices: ["Elephant", "Giraffe", "Blue Whale", "Hippopotamus"], answer: 2 },
+         { question: "Which bird cannot fly?", choices: ["Eagle", "Parrot", "Penguin", "Sparrow"], answer: 2 },
+         { question: "What is a group of lions called?", choices: ["Pack", "Herd", "Pride", "Flock"], answer: 2 },
+         { question: "Which animal is known for changing color?", choices: ["Iguana", "Chameleon", "Gecko", "Salamander"], answer: 1 },
+         { question: "How long is an elephant pregnant before giving birth?", choices: ["6 months", "12 months", "18 months", "22 months"], answer: 3 },
+         { question: "What is the only mammal capable of true flight?", choices: ["Flying Squirrel", "Bat", "Sugar Glider", "Colugo"], answer: 1 },
+         { question: "Which animal has the longest lifespan?", choices: ["Tortoise", "Elephant", "Parrot", "Whale"], answer: 0 },
+         { question: "What is the smallest bird in the world?", choices: ["Hummingbird", "Sparrow", "Finch", "Wren"], answer: 0 }
+      ];
+
+      let current = 0, score = 0, answered = false;
+
+      const homeScreen    = document.getElementById('home-screen');
+      const quizScreen    = document.getElementById('quiz-screen');
+      const resultsScreen = document.getElementById('results-screen');
+      const questionBox   = document.getElementById('question-box');
+      const choicesDiv    = document.getElementById('choices');
+      const feedback      = document.getElementById('feedback');
+      const nextBtn       = document.getElementById('next-btn');
+      const progressBar   = document.getElementById('progress-bar');
+      const progressLabel = document.getElementById('progress-label');
+      const progressContainer = document.getElementById('progress-bar-container');
+
+      function showScreen(screen) {
+         homeScreen.style.display    = 'none';
+         quizScreen.style.display    = 'none';
+         resultsScreen.style.display = 'none';
+         screen.style.display = 'block';
+      }
+
+      function loadQuestion() {
+         answered = false;
+         feedback.textContent = '';
+         feedback.className = '';
+         nextBtn.style.display = 'none';
+         const q = questions[current];
+         questionBox.textContent = q.question;
+         progressLabel.textContent = `Question ${current + 1} of ${questions.length}`;
+         progressBar.style.width = (current / questions.length * 100) + '%';
+         progressContainer.setAttribute('aria-valuenow', current);
+         choicesDiv.innerHTML = '';
+         q.choices.forEach((choice, i) => {
+            const btn = document.createElement('button');
+            btn.className = 'choice-btn';
+            btn.textContent = choice;
+            btn.setAttribute('aria-label', `Choice ${i + 1}: ${choice}`);
+            btn.addEventListener('click', () => selectAnswer(i, btn));
+            choicesDiv.appendChild(btn);
+         });
+      }
+
+      function selectAnswer(index, btn) {
+         if (answered) return;
+         answered = true;
+         const correct = questions[current].answer;
+         const allBtns = choicesDiv.querySelectorAll('.choice-btn');
+         allBtns.forEach(b => b.disabled = true);
+         if (index === correct) {
+            btn.classList.add('correct');
+            feedback.textContent = 'Correct!';
+            feedback.className = 'feedback-correct';
+            score++;
+         } else {
+            btn.classList.add('incorrect');
+            allBtns[correct].classList.add('correct');
+            feedback.textContent = `Incorrect! The correct answer is: ${questions[current].choices[correct]}`;
+            feedback.className = 'feedback-incorrect';
+         }
+         nextBtn.style.display = 'block';
+         nextBtn.textContent = current < questions.length - 1 ? 'Next Question' : 'See Results';
+      }
+
+      function showResults() {
+         progressBar.style.width = '100%';
+         progressContainer.setAttribute('aria-valuenow', questions.length);
+         document.getElementById('score-display').textContent = `${score} / ${questions.length}`;
+         document.getElementById('num-correct').textContent = score;
+         document.getElementById('num-incorrect').textContent = questions.length - score;
+         showScreen(resultsScreen);
+      }
+
+      document.getElementById('start-btn').addEventListener('click', () => {
+         current = 0; score = 0;
+         showScreen(quizScreen);
+         loadQuestion();
+      });
+
+      nextBtn.addEventListener('click', () => {
+         current++;
+         if (current < questions.length) loadQuestion();
+         else showResults();
+      });
+
+      document.getElementById('play-again-btn').addEventListener('click', () => {
+         current = 0; score = 0;
+         showScreen(quizScreen);
+         loadQuestion();
+      });
+   </script>
+
+</body>
+</html>
